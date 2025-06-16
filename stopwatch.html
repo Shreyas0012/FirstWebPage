@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Stopwatch App</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body 
+  style="
+    background-image: linear-gradient(rgba(1, 0, 8, 0.5), rgba(72, 98, 137, 0.5)), url('stopwatch\ bg.jpeg'); 
+    background-size: cover; 
+    background-position: center;
+  " 
+  class="flex items-center justify-center min-h-screen"
+>
+  <div class="bg-transparent rounded-xl p-6 w-full max-w-sm text-center">
+    <h1 class="text-3xl font-bold mb-4">⏱️ Stopwatch</h1>
+    <div id="stopwatchDisplay" class="text-4xl font-mono mb-6">00:00:00</div>
+    
+    <div class="flex justify-center gap-2 mb-4">
+      <button onclick="startStopwatch()" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">Start</button>
+      <button onclick="pauseStopwatch()" class="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600">Pause</button>
+      <button onclick="resetStopwatch()" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">Reset</button>
+    </div>
+
+    <ul id="laps" class="text-left text-sm text-gray-700 list-decimal list-inside"></ul>
+  </div>
+
+  <script>
+    let stopwatchInterval;
+    let stopwatchStartTime = 0;
+    let stopwatchElapsedTime = 0;
+
+    function formatTime(ms) {
+      const totalSeconds = Math.floor(ms / 1000);
+      const hours = String(Math.floor(totalSeconds / 3600)).padStart(2, "0");
+      const minutes = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, "0");
+      const seconds = String(totalSeconds % 60).padStart(2, "0");
+      return `${hours}:${minutes}:${seconds}`;
+    }
+
+    function updateStopwatchDisplay() {
+      const now = Date.now();
+      stopwatchElapsedTime = now - stopwatchStartTime;
+      document.getElementById("stopwatchDisplay").textContent = formatTime(stopwatchElapsedTime);
+    }
+
+    function startStopwatch() {
+      if (!stopwatchInterval) {
+        stopwatchStartTime = Date.now() - stopwatchElapsedTime;
+        stopwatchInterval = setInterval(updateStopwatchDisplay, 1000);
+      }
+    }
+
+    function pauseStopwatch() {
+      clearInterval(stopwatchInterval);
+      stopwatchInterval = null;
+    }
+
+    function resetStopwatch() {
+      clearInterval(stopwatchInterval);
+      stopwatchInterval = null;
+      stopwatchElapsedTime = 0;
+      document.getElementById("stopwatchDisplay").textContent = "00:00:00";
+      document.getElementById("laps").innerHTML = "";
+    }
+
+    function recordLap() {
+      const lapTime = formatTime(stopwatchElapsedTime);
+      const lapItem = document.createElement("li");
+      lapItem.textContent = lapTime;
+      document.getElementById("laps").appendChild(lapItem);
+    }
+  </script>
+</body>
+</html>
